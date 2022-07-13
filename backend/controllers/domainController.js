@@ -1,12 +1,14 @@
-const asyncHandler = require('express-async-handler')
-const Domain = require('../models/domainModel')
+// Functions related to get/set/update/whatever domains in mongoDB
+const asyncHandler = require('express-async-handler'); //Middleware for handling exceptions inside of async express routes and passing them to your express error handlers
+const Domain = require('../models/domainModel'); //import mongo object schema
 
+// Express (web/http) functions:
 
 // @desc    Get domains
 // @route   GET /api/domains
 // @access  Private
 const getDomain = asyncHandler(async (req, res) => {
-	const domains = await Domain.find()//{status: req.body.statusId }.populate("status")
+	const domains = await Domain.find()
 
 	res.status(200).json(domains)
 })
@@ -60,6 +62,8 @@ const deleteDomain = asyncHandler(async (req, res) => {
 	res.status(200).json({id: req.params.id})	
 })
 
+// Internal functions, used in cron and statusController:
+
 async function updateDomainLastStatus(domainId, isUp){
 	const domain = await Domain.findById(domainId)
 	let updatedDomain
@@ -73,11 +77,13 @@ async function updateDomainLastStatus(domainId, isUp){
   	return updatedDomain
 }
 
+
 async function getDomainById(domainId){
 	const domain = await Domain.findById(domainId)
 	return domain
 }
 
+// Export all the functions
 module.exports = {
 	getDomain, setDomain, updateDomain, deleteDomain, updateDomainLastStatus, getDomainById
 }

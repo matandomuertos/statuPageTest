@@ -1,3 +1,4 @@
+//Top of the domain box, with the name of the domain, red/green depeding the status and the last update on the right
 import Alert from '@mui/material/Alert';
 import Link from '@mui/material/Link';
 import AlertTitle from '@mui/material/AlertTitle';

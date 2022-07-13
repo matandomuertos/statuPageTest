@@ -1,3 +1,5 @@
+// Box with domains stored in mongoDB
+
 import React, { useState, useEffect } from "react";
 import Paper from '@mui/material/Paper';
 import Appsbox from './Appsbox.js';

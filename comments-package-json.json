@@ -1,13 +1,15 @@
+//package.json comments
+
 {
   "name": "mern2",
   "version": "1.0.0",
   "description": "MERN Status page",
   "main": "server.js",
-  "scripts": {
+  "scripts": { // create scripts to run with 'npm run'
     "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
-    "client": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "server": "nodemon backend/server.js", // start backend server with restart when files change
+    "client": "npm start --prefix frontend", // start frontend server with live update
+    "dev": "concurrently \"npm run server\" \"npm run client\"" // start backend and front end server at the same time (requires install concurrently)
   },
   "author": "Nahuel",
   "license": "MIT",

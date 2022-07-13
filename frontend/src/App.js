@@ -1,12 +1,10 @@
-// import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+// main App
 import Domains from './components/Domains'
 
-function App() {
-
-
+function App() { //main function
   return (
-    <div>
-      <Domains/>
+    <div> 
+      <Domains/>  {/*exec Domains*/}
     </div>
   );
 }

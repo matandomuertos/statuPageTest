@@ -1,3 +1,4 @@
+//Main index.js which executs App.js, it was created automatically
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';

@@ -1,13 +1,15 @@
-var cron = require('node-cron');
-const axios = require('axios');
+//Cronjob task that run while backend is running (only needs to be imported in server.js)
+var cron = require('node-cron'); //import node-cron
+const axios = require('axios'); //import axios (to do http requests)
 const DomainController = require('./../controllers/domainController');
 const Status = require('../models/statusModel')
-const API_URL = 'http://localhost:8000/api/domains/';
+const API_URL = 'http://localhost:8000/api/domains/'; //set where the request of axios will be done... it should be in .env
 
+//Fetch all domains from the API
 async function fetchDomains(){
   try {
-    const response = await axios.get(API_URL);
-    return response.data;
+    const response = await axios.get(API_URL); //get everything from API_URL
+    return response.data; //return only the data part (the answer from the API, not all the other useless information)
   } catch (err) {
     if (err.response) {
       // Not in the 200 response range 
@@ -20,9 +22,10 @@ async function fetchDomains(){
   }
 }
 
+//Run get to the host and wait up to 10s for the answer, returns if it was ok or not
 async function checkHost(url){
     try {
-        const response = await axios.get(url, {timeout: 10000});
+        const response = await axios.get(url, {timeout: 10000}); //the same as 'curl --connect-timeout 10000 $URL', it should be in .env the timeout value
         return true
     } catch(err){
         console.log(`${url} error: ${err.message}`)
@@ -30,6 +33,7 @@ async function checkHost(url){
     }
 }
 
+//Update the status in status and domain collections, almost the same as updateStatus in cotrollers/statusController.js
 async function updateStatus(id, status){
 
     const updatedStatus = await Status.findOneAndUpdate({ domainId: id }, { $push: 
@@ -44,21 +48,16 @@ async function updateStatus(id, status){
 
 }
 
+//Main function
 async function checkDomains(){
-  console.log('Checking domains')
-  const domains = await fetchDomains()
-  domains.map(async (domain) => {
-    const dom = await DomainController.getDomainById(domain._id);
-    if(!dom){
-      console.error('Domain not found')
-      exit(1);
-    } else {
-      const isUp = await checkHost(dom.url)
-      updateStatus(dom._id, isUp)
-    }
+  console.log('Checking domains') //print checking domains
+  const domains = await fetchDomains() //get all the domains
+  domains.map(async (domain) => { //map response (basically a foreach of all the values)
+      const isUp = await checkHost(domain.url); //check if the domain is accesible
+      updateStatus(domain._id, isUp); //updates the DB with the current status
   })
 }
 
 
 
-cron.schedule('* * * * *', checkDomains);
+cron.schedule('* * * * *', checkDomains); //exec checkDomains every minute
