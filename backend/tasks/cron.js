@@ -1,16 +1,13 @@
 var cron = require('node-cron');
-const { getDomain, updateDomain } = require('../controllers/domainController');
-const { updateStatus } = require('../controllers/statusController');
 const axios = require('axios');
+const DomainController = require('./../controllers/domainController');
+const Status = require('../models/statusModel')
 const API_URL = 'http://localhost:8000/api/domains/';
-const util = require('util')
-const exec = util.promisify(require('child_process').exec);
 
 async function fetchDomains(){
   try {
     const response = await axios.get(API_URL);
-    console.log('asdf')
-    return response;
+    return response.data;
   } catch (err) {
     if (err.response) {
       // Not in the 200 response range 
@@ -22,27 +19,46 @@ async function fetchDomains(){
     }
   }
 }
-async function ping(host){
-  const {stdout, stderr} = await exec(`ping -c 5 ${host}`);
-  console.log(stdout);
-  console.log(stderr);
+
+async function checkHost(url){
+    try {
+        const response = await axios.get(url, {timeout: 10000});
+        return true
+    } catch(err){
+        console.log(`${url} error: ${err.message}`)
+        return false
+    }
 }
 
-async function pingDomains(){
+async function updateStatus(id, status){
+
+    const updatedStatus = await Status.findOneAndUpdate({ domainId: id }, { $push: 
+      { history: { isUp: status, date: new Date() }}
+    }, { upsert: true, new: true })
+
+    const updatedDomain = await DomainController.updateDomainLastStatus(id, status)
+
+    if(!updatedDomain){
+      console.error('Domain not updated')
+    } 
+
+}
+
+async function checkDomains(){
+  console.log('Checking domains')
   const domains = await fetchDomains()
-  console.log(domains.data.name)
-  domains.map(domain => {
-    console.log(domain.name)
-    ping(domain.url)
+  domains.map(async (domain) => {
+    const dom = await DomainController.getDomainById(domain._id);
+    if(!dom){
+      console.error('Domain not found')
+      exit(1);
+    } else {
+      const isUp = await checkHost(dom.url)
+      updateStatus(dom._id, isUp)
+    }
   })
 }
 
 
 
-// cron.schedule('* * * * *', () => {
-//   pingDomains();
-// });
-
-
-// I want to run ping from here but it's not working 
-// I have to document everything and packed in some docker images
+cron.schedule('* * * * *', checkDomains);

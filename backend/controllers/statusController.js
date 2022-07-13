@@ -15,7 +15,6 @@ const getStatusByDomainId = asyncHandler(async (req, res) => {
 // @route   PUT /api/status
 // @access  Private
 const updateStatus = asyncHandler(async (req, res) => {
-	console.log(req.body.isUp)
 	if(!req.body.domainId || req.body.isUp == null){
 		res.status(400)
 		throw new Error('Please add a domainId and isUp')
