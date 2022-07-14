@@ -5,12 +5,12 @@ import Paper from '@mui/material/Paper';
 import Appsbox from './Appsbox.js';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import DomainsService from './../features/domainService'
-import StatusBar from './StatusBar'
+import DomainsService from './../features/domainService';
+import StatusBar from './StatusBar';
 
 function Domains() {
 
-  const [domains, setDomains] = useState([])
+  const [domains, setDomains] = useState([]);
 
   useEffect(() => {
     retrieveDomains();
@@ -20,6 +20,7 @@ function Domains() {
   function retrieveDomains(){
   	DomainsService.fetchDomains()
   		.then(rensponse => {
+
   			setDomains(rensponse.data);
   		})
   }

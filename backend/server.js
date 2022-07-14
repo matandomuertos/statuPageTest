@@ -5,11 +5,13 @@ const { errorHandler } = require('./middleware/errorMiddleware') //import the cu
 const connectDB = require('./config/db') //import DB connection
 const port = process.env.PORT || 6000 //import the port of the backend in .env
 const cronJob = require('./tasks/cron') //import the cronjob, this will make the cronjob run directly
+const cors = require('cors')
 
 connectDB() //connects to the DB
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 

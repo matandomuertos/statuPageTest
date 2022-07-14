@@ -16,7 +16,7 @@ const getStatusByDomainId = asyncHandler(async (req, res) => {
 })
 
 // @desc    Add or create historic status statuses
-// @route   PUT /api/status
+// @route   POST /api/status
 // @access  Private
 const updateStatus = asyncHandler(async (req, res) => {
 	if(!req.body.domainId || req.body.isUp == null){ //check if the body includes the right keys

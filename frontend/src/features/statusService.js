@@ -1,7 +1,6 @@
 //used in components to get the status based in the domainID
-import axios from 'axios'
-
-const API_URL = '/api/status/'
+import axios from './axios';
+const API_URL = "/api/status/";
 
 const fetchStatus = async (id) => {
   try {
